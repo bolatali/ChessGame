@@ -245,18 +245,18 @@ void Horse::move(vector <ChessElement>& chessElements)
 
 }
 
-class Piyon : public ChessElement {
+class Pawn : public ChessElement {
 public:
 
 	void move(vector <ChessElement>& chessElements);
 
-	Piyon(string colour, string type, float point, int p_x, int p_y) :ChessElement(colour, type, point, p_x, p_y){}
+	Pawn(string colour, string type, float point, int p_x, int p_y) :ChessElement(colour, type, point, p_x, p_y){}
 	
 		
 	
 };
 
-void Piyon::move(vector <ChessElement>& chessElements) 
+void Pawn::move(vector <ChessElement>& chessElements) 
 { 
 	if (element_colour == "black") // siyah taslarin hep üst tarafta beyaz taslarin alt tarafta basladigi varsayilmistir.
 	{ // siyah taslar yukardan asagi ilerler
@@ -349,17 +349,17 @@ void Piyon::move(vector <ChessElement>& chessElements)
 		
 }
 
-class Kale : public ChessElement {
+class Rook : public ChessElement {
 public:
 
 	void move(vector <ChessElement>& chessElements);
 
-	Kale(string colour, string type, float point, int p_x, int p_y) :ChessElement(colour, type, point, p_x, p_y){}
+	Rook(string colour, string type, float point, int p_x, int p_y) :ChessElement(colour, type, point, p_x, p_y){}
 	
 
 };
 
-void Kale::move(vector <ChessElement>& chessElements)
+void Rook::move(vector <ChessElement>& chessElements)
 {
 	
 	if (element_colour == "black")
