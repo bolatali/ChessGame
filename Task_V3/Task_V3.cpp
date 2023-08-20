@@ -3,31 +3,30 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <list>
 #include "ChessElement.h"
 using namespace std;
 
 
 float calculateScore(vector <ChessElement>& chessElements, string colour)
 {
-    float score_black = 0;
+    float total_score = 0;
 
     for (int i = 0; i < chessElements.size(); ++i) 
     {
         if (chessElements[i].getColour() == colour) 
         {
-            score_black += chessElements[i].getPoint();
+            total_score += chessElements[i].getPoint();
         }
     }
 
-    return score_black;
+    return total_score;
 }
 
 
-void setPiecesProperty(vector <Kale>& kaleElements, vector <Piyon>& piyonElements, vector <Horse>& horseElements, vector <ChessElement>& chessElements, map<char, int>piecesVal)
+void setPiecesProperty(vector <Kale>& kaleElements, vector <Piyon>& piyonElements, vector <Horse>& horseElements, vector <ChessElement>& chessElements, map<char, int>piecesVal, string board[8][8])
 {
     ifstream readFile;
-    readFile.open("board4.txt");
+    readFile.open("board2.txt");
     string frame;
 
     int count = 0;
@@ -38,10 +37,11 @@ void setPiecesProperty(vector <Kale>& kaleElements, vector <Piyon>& piyonElement
         for (int j = 0; j < 8; ++j) 
         {
             readFile >> frame;
+            board[i][j] = frame;
             if (frame != "--") 
             {
 
-                if (frame[1] == 's') 
+                if (frame[1] == 's') //ikinci indexi hangi renk oldugunu belirtir.
                 {
                     colour = "black";
                 }else 
@@ -50,7 +50,7 @@ void setPiecesProperty(vector <Kale>& kaleElements, vector <Piyon>& piyonElement
                 }
 
 
-                if (frame[0] == 'a') 
+                if (frame[0] == 'a') //ilk indexi hangi tip tas oldugunu belirtir
                 {
                     horseElements.push_back(Horse(colour, "at", piecesVal[frame[0]], j + 1, i + 1));
 
@@ -69,43 +69,81 @@ void setPiecesProperty(vector <Kale>& kaleElements, vector <Piyon>& piyonElement
 
 
             }
-        }
 
+        }
+    }
+}
+
+void startGame(vector <Kale>& kaleElements, vector <Piyon>& piyonElements, vector <Horse>& horseElements, vector <ChessElement>& chessElements, string board[8][8])
+{
+    string piece;
+    int horse_counter = 0;
+    int piyon_counter = 0;
+    int kale_counter = 0;
+
+    for (int i = 0; i < 8; ++i)
+    {
+        for (int j = 0; j < 8; ++j)
+        {
+            piece = board[i][j];
+            if (piece != "--")
+            {
+                if (piece[0] == 'a')
+                {  
+                    horseElements[horse_counter].move(chessElements); // boarddaki tas at ise at hamlesini yapar.
+                    horse_counter++; // bir sonraki at tasi geldiginde sonraki at nesnesini caigrmak icin indexi counterda tutuldu. 
+                }else if(piece[0] == 'p')
+                {
+                    piyonElements[piyon_counter].move(chessElements); // boarddaki tas piyon ise piyon hamlesini yapar.
+                    piyon_counter++; // bir sonraki piyon tasi geldiginde sonraki piyon nesnesini caigrmak icin indexi counterda tutuldu.
+                }
+                else if (piece[0] == 'k')
+                {
+                    kaleElements[kale_counter].move(chessElements); // boarddaki tas kale ise kale hamlesini yapar.
+                    kale_counter++; // bir sonraki kale tasi geldiginde sonraki kale nesnesini caigrmak icin indexi counterda tutuldu.
+                }
+            }
+        }
     }
 }
 
 
-
-
 int main()
 {
-    vector <ChessElement> chessElements; // dinamik bir sekilde nesne olusturmak icin vector kullandim.
+    vector <ChessElement> chessElements; 
     vector <Horse> horseElements;
     vector <Piyon> piyonElements;
     vector <Kale> kaleElements;
 
-    string str[8][8];
+    
     map<char, int> piecesVal;
     piecesVal = { {'p',1},{'a',3},{'f',3},{'k',5},{'v',9},{'s',100} };
 
-
+    string board[8][8];
     string black = "black";
     string white = "white";
-    int score_black = 0;
-    int score_white = 0;
+    float score_black = 0 ;
+    float score_white = 0;
 
 
-    setPiecesProperty(kaleElements, piyonElements , horseElements, chessElements, piecesVal); 
+    setPiecesProperty(kaleElements, piyonElements , horseElements, chessElements, piecesVal, board); 
 
+    
+    score_black = calculateScore(chessElements, black);
+    score_white = calculateScore(chessElements, white);
+    cout << "Baslangic skorlari-> siyah tas: " << score_black << "  beyaz tas: " << score_white<<endl;
+    
+
+    //kaleElements[0].move(chessElements);
+    startGame(kaleElements,piyonElements, horseElements, chessElements,board); // boarddaki tum taslari gezip move fonksiyonunu cagirir.
+    
 
     score_black = calculateScore(chessElements, black);
     score_white = calculateScore(chessElements, white);
-
-    cout << "score of black: " << score_black << endl;
-    cout << "score of white: " << score_white << endl;
-
-    kaleElements[0].move(chessElements);
-    chessElements[3].displayProperty();
+    cout << "Bitis skorlari-> siyah tas: " << score_black << "  beyaz tas: " << score_white << endl;
     
+    
+    
+
     return 0;
 }
